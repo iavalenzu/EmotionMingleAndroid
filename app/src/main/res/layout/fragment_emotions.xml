@@ -1,0 +1,193 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.gadgeteer.efelunte.emotionmingle.ProfileFragment"
+    android:background="#ffffffff">
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal|top"
+        android:background="#ffffffff">
+
+
+        <LinearLayout
+            android:id="@+id/layout_estado_actual"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="30dp"
+            android:paddingTop="30dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Carolina se sentía:"
+                android:id="@+id/label_estado_actual"
+                android:textSize="20dp"
+                android:textColor="#ff000000"
+                android:textIsSelectable="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feliz"
+                android:id="@+id/texto_estado_actual"
+                android:textSize="25dp"
+                android:textColor="#ff000000"
+                android:padding="20dp"/>
+
+            </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="¿Como te sientes ahora?"
+            android:id="@+id/pregunta"
+            android:gravity="center_horizontal"
+            android:textSize="20dp"
+            android:textColor="#ff000000"
+            android:layout_below="@id/layout_estado_actual"
+            android:padding="15dp"/>
+
+        <LinearLayout
+            android:id="@+id/estados"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pregunta"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/button_estresado"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:text="Estresado" />
+
+                <Button
+                    android:id="@+id/button_agotado"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:text="Agotado" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/button_enojado"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:text="Enojado" />
+
+                <Button
+                    android:id="@+id/button_triste"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:text="Triste" />
+
+
+                </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/button_feliz"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:text="Feliz" />
+
+                <Button
+                    android:id="@+id/button_tranquilo"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:text="Tranquilo" />
+
+
+                </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/button_energico"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:text="Energico" />
+
+                <Button
+                    android:id="@+id/button_relajado"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="145dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center"
+                    android:text="Relajado" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/button1"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="145dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:text="Guardar" />
+
+            <Button
+                android:id="@+id/button2"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="145dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:text="Cancelar" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

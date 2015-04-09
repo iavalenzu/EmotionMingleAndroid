@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">EmotionMingle</string>
+    <string name="title_section1">Perfil</string>
+    <string name="title_section2">Emociones</string>
+    <string name="title_section3">Tlatoque</string>
+    <string name="title_section4">Estilo de Vida</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_interactions">InteractionsActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_test">TestActivity</string>
+
+    <string name="asociar_contacto">Si</string>
+    <string name="no_asociar_contacto">No</string>
+
+    <string-array name="leafs_array">
+        <item>Hoja 1</item>
+        <item>Hoja 2</item>
+        <item>Hoja 3</item>
+        <item>Hoja 4</item>
+        <item>Hoja 5</item>
+        <item>Hoja 6</item>
+    </string-array>
+
+    <string-array name="contacts_array">
+        <item>Contacto 1</item>
+        <item>Contacto 2</item>
+        <item>Contacto 3</item>
+        <item>Contacto 4</item>
+        <item>Contacto 5</item>
+        <item>Contacto 6</item>
+    </string-array>
+
+
+</resources>

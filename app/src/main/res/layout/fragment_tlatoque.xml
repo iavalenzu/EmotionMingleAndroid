@@ -1,0 +1,46 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.gadgeteer.efelunte.emotionmingle.ProfileFragment"
+    android:background="#ffffffff">
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        android:background="#ffffffff"
+        android:layout_margin="20dp">
+
+
+        <Button
+            android:id="@+id/button_interacciones"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Interacciones" />
+
+        <Button
+            android:id="@+id/button_test_1"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Test 1"
+            android:layout_below="@+id/button_interacciones"/>
+
+<!--
+        <Button
+            android:id="@+id/button_test_2"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Test 2"
+            android:layout_below="@+id/button_test_1"/>
+-->
+
+    </RelativeLayout>
+
+</FrameLayout>
