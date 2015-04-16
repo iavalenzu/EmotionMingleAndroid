@@ -12,7 +12,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".EmotionMingle"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,13 +22,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".InteractionsActivity"
-            android:label="@string/title_activity_interactions" >
-        </activity>
-        <activity
-            android:name=".TestActivity"
+            android:name=".TestLeafsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_test" >
         </activity>
+
+        <activity
+            android:name=".TestBarActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_test" >
+        </activity>
+
     </application>
 
 </manifest>

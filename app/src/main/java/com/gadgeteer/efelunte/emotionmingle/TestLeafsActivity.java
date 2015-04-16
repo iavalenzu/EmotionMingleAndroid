@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -27,7 +28,7 @@ import java.util.Set;
 import java.util.UUID;
 
 
-public class TestActivity extends ActionBarActivity
+public class TestLeafsActivity extends ActionBarActivity
 {
 
     private final static String DEVICE_NAME = "EmotionMingle";
@@ -36,21 +37,23 @@ public class TestActivity extends ActionBarActivity
 
     private static final int REQUEST_ENABLE_BT = 1;
 
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     BluetoothAdapter mBluetoothAdapter;
-    BluetoothSocket mBluetoothSocket;
-    OutputStream mOutputStream;
+
+    EmotionMingleHardware emotionMingleHardware;
 
     Spinner spinnerLeafs;
     TextView textviewLeafValue;
     SeekBar seekBarLeafValue;
 
+    Button buttonTurnOff;
 
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver()
+    int[] leafsValues = new int[8];
+
+    private final BroadcastReceiver mReceiverFound = new BroadcastReceiver()
     {
-        public void onReceive(Context context, Intent intent)
-        {
+        public void onReceive(Context context, Intent intent) {
+
             String action = intent.getAction();
 
             Log.i(EmotionMingle.TAG, "Action: " + action);
@@ -59,33 +62,46 @@ public class TestActivity extends ActionBarActivity
             {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                if(device == null){
+                if (device == null) {
                     return;
                 }
 
                 String deviceName = device.getName();
 
-                if(deviceName == null){
+                if (deviceName == null) {
                     return;
                 }
 
-                if(deviceName.equals(DEVICE_NAME))
-                {
+                if (deviceName.equals(DEVICE_NAME)) {
                     device.createBond();
                 }
             }
 
-            if (action.equals(BluetoothDevice.ACTION_PAIRING_REQUEST))
-            {
+        }
+    };
+
+    private final BroadcastReceiver mReceiverPairingRequest = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+
+            if (action.equals(BluetoothDevice.ACTION_PAIRING_REQUEST)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                if(device == null){
+                if (device == null) {
                     return;
                 }
 
                 device.setPin(DEVICE_PIN_CODE.getBytes());
 
             }
+        }
+    };
+
+    private final BroadcastReceiver mReceiverBondStateChanged = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
 
             if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED))
             {
@@ -109,6 +125,22 @@ public class TestActivity extends ActionBarActivity
                     if(bondState == BluetoothDevice.BOND_BONDED)
                     {
                         Log.i(EmotionMingle.TAG, "El device " + name + " esta enlazado!!");
+
+                        try {
+                            emotionMingleHardware =  new EmotionMingleHardware(device);
+
+                            Toast.makeText(TestLeafsActivity.this, "Estas conectado a EmotionMingle", Toast.LENGTH_LONG).show();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.i(EmotionMingle.TAG, "No pude establecer la conexion");
+                            Toast.makeText(TestLeafsActivity.this, "No pude establecer la conexion", Toast.LENGTH_LONG).show();
+
+                            if(emotionMingleHardware != null) {
+                                emotionMingleHardware.close();
+                            }
+                        }
+
                     }
                 }
             }
@@ -132,18 +164,18 @@ public class TestActivity extends ActionBarActivity
         {
             if (!mBluetoothAdapter.isEnabled())
             {
+                Log.i(EmotionMingle.TAG, "El bluetooth esta desactivado, se debe habilitar");
+
                 Intent turnOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(turnOnIntent, REQUEST_ENABLE_BT);
             }
             else
             {
-                Log.i(EmotionMingle.TAG, "Bluetooth is already on");
-
                 BluetoothDevice bondedDevice = getBondedDevice(DEVICE_NAME);
 
                 if(bondedDevice == null)
                 {
-                    Log.i(EmotionMingle.TAG, "BondedDevice es nulo!!");
+                    Log.i(EmotionMingle.TAG, "No encuentro el dispositivo en los paired devices.");
 
                     mBluetoothAdapter.startDiscovery();
 
@@ -152,50 +184,23 @@ public class TestActivity extends ActionBarActivity
                 {
                     try
                     {
+                        bondedDevice.setPin(DEVICE_PIN_CODE.getBytes());
+                        emotionMingleHardware =  new EmotionMingleHardware(bondedDevice);
 
-                        BluetoothSocket mBluetoothSocket = bondedDevice.createRfcommSocketToServiceRecord(MY_UUID);
+                        Toast.makeText(TestLeafsActivity.this, "Estas conectado a EmotionMingle", Toast.LENGTH_LONG).show();
 
-                        if(mBluetoothSocket != null)
-                        {
-                            mBluetoothAdapter.cancelDiscovery();
-
-                            mBluetoothSocket.connect();
-
-                            mOutputStream = mBluetoothSocket.getOutputStream();
-
-                            if(mOutputStream != null)
-                            {
-                                String cmd = "hoja:2:34\n";
-                                byte[] b = cmd.getBytes("UTF-8");
-                                mOutputStream.write(b);
-                            }
-                            else
-                            {
-                                Log.i(EmotionMingle.TAG, "OutputStream es nulo!!");
-                           }
-
-
-
-
-                        }
-                        else
-                        {
-                            Log.i(EmotionMingle.TAG, "BluetoothSocket es nulo!!");
-                        }
                     }
-                    catch (Exception e)
+                    catch (IOException e)
                     {
-                        Log.i(EmotionMingle.TAG, "Exception: " + e.getLocalizedMessage());
+                        e.printStackTrace();
+                        Log.i(EmotionMingle.TAG, "No pude establecer la conexion");
 
-                        try
-                        {
-                            mBluetoothSocket.close();
-                        }
-                        catch (Exception e2)
-                        {
-                            Log.i(EmotionMingle.TAG, "Exception: " + e2.getLocalizedMessage());
+                        if(emotionMingleHardware != null){
+                            emotionMingleHardware.close();
                         }
                     }
+
+
                 }
             }
         }
@@ -211,12 +216,29 @@ public class TestActivity extends ActionBarActivity
         // Apply the adapter to the spinner
         spinnerLeafs.setAdapter(adapter_leafs);
 
+
         textviewLeafValue = (TextView) findViewById(R.id.textview_leaf_value);
         textviewLeafValue.setText("0");
 
 
         seekBarLeafValue = (SeekBar) findViewById(R.id.seekbar_leaf_value);
         seekBarLeafValue.setProgress(0);
+        seekBarLeafValue.setMax(12);
+
+
+        spinnerLeafs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                seekBarLeafValue.setProgress(leafsValues[position]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         seekBarLeafValue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -235,32 +257,70 @@ public class TestActivity extends ActionBarActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-                int progress = seekBar.getProgress();
+
+                if(emotionMingleHardware != null)
+                {
+                    int position = spinnerLeafs.getSelectedItemPosition();
+
+                    int hoja = position + 1;
+                    int value = seekBar.getProgress();
+
+                    leafsValues[position] = value;
+
+                    try {
+                        emotionMingleHardware.changeLeaf(hoja, value);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.i(EmotionMingle.TAG, "Ocurrio un error al enviar el comando");
+                        if(emotionMingleHardware != null) {
+                            emotionMingleHardware.close();
+                        }
+
+                    }
+                }
 
 
 
             }
         });
 
-        Button buttonSearchDevices = (Button) findViewById(R.id.button_search_devices);
 
-        buttonSearchDevices.setOnClickListener(new View.OnClickListener() {
+        buttonTurnOff = (Button) findViewById(R.id.button_turn_off);
+
+        buttonTurnOff.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                mBluetoothAdapter.startDiscovery();
+            public void onClick(View v)
+            {
+                if(emotionMingleHardware != null)
+                {
+                    try
+                    {
+                        emotionMingleHardware.turnOff();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                        Log.i(EmotionMingle.TAG, "Ocurrio un error al enviar el comando");
+                        if(emotionMingleHardware != null) {
+                            emotionMingleHardware.close();
+                        }
+
+                    }
+                }
+
             }
         });
 
 
         // Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+        registerReceiver(mReceiverFound, filter);
 
         IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
-        registerReceiver(mReceiver, filter2); // Don't forget to unregister during onDestroy
+        registerReceiver(mReceiverPairingRequest, filter2);
 
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(mReceiver, filter3); // Don't forget to unregister during onDestroy
+        registerReceiver(mReceiverBondStateChanged, filter3);
 
 
     }
@@ -270,7 +330,16 @@ public class TestActivity extends ActionBarActivity
     protected void onDestroy() {
         super.onDestroy();
 
-        unregisterReceiver(mReceiver);
+        unregisterReceiver(mReceiverFound);
+        unregisterReceiver(mReceiverPairingRequest);
+        unregisterReceiver(mReceiverBondStateChanged);
+
+
+        if(emotionMingleHardware != null)
+        {
+            emotionMingleHardware.close();
+        }
+
 
     }
 
@@ -291,11 +360,6 @@ public class TestActivity extends ActionBarActivity
 
     }
 
-
-
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -303,15 +367,12 @@ public class TestActivity extends ActionBarActivity
         {
             if(mBluetoothAdapter.isEnabled())
             {
-                Toast.makeText(getApplicationContext(), "onActivityResult: Bluetooth turned on", Toast.LENGTH_LONG).show();
-
+                Log.i(EmotionMingle.TAG, "Bluetooth turned on!!!");
                 mBluetoothAdapter.startDiscovery();
-
-
             }
             else
             {
-                Toast.makeText(getApplicationContext(), "onActivityResult: Bluetooth is not turned on!!", Toast.LENGTH_LONG).show();
+                Log.i(EmotionMingle.TAG, "Bluetooth is NOT turned on!!!");
             }
         }
     }
@@ -337,13 +398,15 @@ public class TestActivity extends ActionBarActivity
             return true;
         }
 
+        if (id == R.id.action_find_device) {
+
+            mBluetoothAdapter.startDiscovery();
+
+            return true;
+        }
+
+
         return super.onOptionsItemSelected(item);
-    }
-
-    public void manageConnectedSocket(BluetoothSocket socket)
-    {
-        Log.i(EmotionMingle.TAG, "manageConnectedSocket!!");
-
     }
 
 

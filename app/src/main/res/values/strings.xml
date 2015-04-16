@@ -17,6 +17,7 @@
 
     <string name="asociar_contacto">Si</string>
     <string name="no_asociar_contacto">No</string>
+    <string name="action_find_device">Buscar EmotionMingle</string>
 
     <string-array name="leafs_array">
         <item>Hoja 1</item>
@@ -25,6 +26,8 @@
         <item>Hoja 4</item>
         <item>Hoja 5</item>
         <item>Hoja 6</item>
+        <item>Hoja 7</item>
+        <item>Hoja 8</item>
     </string-array>
 
     <string-array name="contacts_array">

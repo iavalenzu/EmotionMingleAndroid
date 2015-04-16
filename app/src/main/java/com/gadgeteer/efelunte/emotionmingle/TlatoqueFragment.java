@@ -66,24 +66,25 @@ public class TlatoqueFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_tlatoque, container, false);
 
-        Button buttonInteracciones = (Button)view.findViewById(R.id.button_interacciones);
-
-        buttonInteracciones.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(getActivity(), InteractionsActivity.class);
-                startActivity(intent);
-            }
-        });
-
         Button buttonTest1 = (Button)view.findViewById(R.id.button_test_1);
 
         buttonTest1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(getActivity(), TestActivity.class);
+                Intent intent = new Intent(getActivity(), TestLeafsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        Button buttonTest2 = (Button)view.findViewById(R.id.button_test_2);
+
+        buttonTest2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(getActivity(), TestBarActivity.class);
                 startActivity(intent);
             }
         });

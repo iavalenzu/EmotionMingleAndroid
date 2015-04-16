@@ -46,9 +46,6 @@ public class EmotionMingle extends ActionBarActivity
     private CharSequence mTitle;
 
 
-    private BluetoothAdapter mBluetoothAdapter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -60,37 +57,6 @@ public class EmotionMingle extends ActionBarActivity
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp( R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
-
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        if (mBluetoothAdapter == null)
-        {
-            // Device does not support Bluetooth
-            Log.i(TAG, "onCreate: Device does not support Bluetooth");
-        }
-        else
-        {
-            if (!mBluetoothAdapter.isEnabled())
-            {
-                Intent turnOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(turnOnIntent, REQUEST_ENABLE_BT);
-
-                Log.i(TAG, "onCreate: Bluetooth turned on");
-            }
-            else
-            {
-                Log.i(TAG, "onCreate: Bluetooth is already on");
-
-                getBondedGadgeteer();
-
-            }
-
-
-
-        }
-
-
 
     }
 
@@ -121,44 +87,6 @@ public class EmotionMingle extends ActionBarActivity
 
 
     }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if(requestCode == REQUEST_ENABLE_BT)
-        {
-            if(mBluetoothAdapter.isEnabled())
-            {
-                Log.i(TAG, "onActivityResult: Bluetooth turned on");
-
-                getBondedGadgeteer();
-
-            }
-            else
-            {
-                Log.i(TAG, "onActivityResult: Bluetooth is not turned on!!");
-            }
-        }
-    }
-
-    public BluetoothDevice getBondedGadgeteer()
-    {
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        // If there are paired devices
-        if (pairedDevices.size() > 0)
-        {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices)
-            {
-                Log.i("EmotionMingleTag", "DeviceName: " + device.getName());
-            }
-        }
-
-        return null;
-
-    }
-
 
     public void onSectionAttached(int number)
     {

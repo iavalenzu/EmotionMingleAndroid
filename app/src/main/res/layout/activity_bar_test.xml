@@ -1,0 +1,277 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.gadgeteer.efelunte.emotionmingle.TestBarActivity">
+
+
+    <LinearLayout
+        android:id="@+id/linearlayout_bar_sad_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Sad"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_bar_sad_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/textview_bar_sad_value"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="0"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearlayout_bar_tired_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearlayout_bar_sad_value"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Tired"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_bar_tired_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/textview_bar_tired_value"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="0"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearlayout_bar_stressed_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearlayout_bar_tired_value"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Stressed"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_bar_stressed_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/textview_bar_stressed_value"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="0"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearlayout_bar_angry_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearlayout_bar_stressed_value"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Angry"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_bar_angry_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/textview_bar_angry_value"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="0"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearlayout_bar_happy_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearlayout_bar_angry_value"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Happy"/>
+
+
+
+        <SeekBar
+            android:id="@+id/seekbar_bar_happy_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/textview_bar_happy_value"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="0"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearlayout_bar_energetic_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearlayout_bar_happy_value"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Energetic"/>
+
+
+        <SeekBar
+            android:id="@+id/seekbar_bar_energetic_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/textview_bar_energetic_value"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="0"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearlayout_bar_relaxed_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearlayout_bar_energetic_value"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Relaxed"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_bar_relaxed_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/textview_bar_relaxed_value"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="0"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearlayout_bar_calmed_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearlayout_bar_relaxed_value"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".3"
+            android:text="Calmed"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_bar_calmed_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/textview_bar_calmed_value"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="0"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_turn_off"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/linearlayout_bar_calmed_value"
+        android:layout_height="wrap_content"
+        android:text="Apagar"/>
+
+</RelativeLayout>

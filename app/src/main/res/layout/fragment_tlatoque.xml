@@ -14,21 +14,22 @@
 
 
         <Button
-            android:id="@+id/button_interacciones"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="Interacciones" />
-
-        <Button
             android:id="@+id/button_test_1"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Test 1"
-            android:layout_below="@+id/button_interacciones"/>
+            android:text="Test Hojas"/>
+
+        <Button
+            android:id="@+id/button_test_2"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Test Barra"
+            android:layout_below="@+id/button_test_1"/>
+
 
 <!--
         <Button
