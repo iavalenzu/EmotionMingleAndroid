@@ -2,10 +2,13 @@
 <resources>
 
     <string name="app_name">EmotionMingle</string>
-    <string name="title_section1">Perfil</string>
-    <string name="title_section2">Emociones</string>
-    <string name="title_section3">Tlatoque</string>
-    <string name="title_section4">Estilo de Vida</string>
+
+    <string name="title_section1">Arbol</string>
+    <string name="title_section2">Perfil</string>
+    <string name="title_section3">Emociones</string>
+    <string name="title_section4">Tlatoque</string>
+
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
@@ -18,6 +21,9 @@
     <string name="asociar_contacto">Si</string>
     <string name="no_asociar_contacto">No</string>
     <string name="action_find_device">Buscar EmotionMingle</string>
+    <string name="action_register_short">Register</string>
+    <string name="prompt_firstname">Firstname</string>
+    <string name="prompt_lastname">Lastname</string>
 
     <string-array name="leafs_array">
         <item>Hoja 1</item>

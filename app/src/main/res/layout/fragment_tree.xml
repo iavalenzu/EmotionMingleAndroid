@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/social_escenario2"
+        android:alpha="0.4"
+        android:scaleType="fitXY"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/arbol_01_b"
+        android:id="@+id/imageViewBackground"
+        android:scaleType="fitXY"
+
+        />
+
+
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="420dp"
+        android:src="@drawable/solyluna2_01"
+        android:id="@+id/imageViewStar"
+        />
+
+
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/hojas_01"
+        android:rotation="-135"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="170dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/imageViewLeaf1" />
+
+
+    <ImageView
+        android:id="@+id/imageViewLeaf2"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/hojas_01"
+        android:rotation="-135"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="240dp"
+        android:layout_alignParentBottom="true"
+         />
+
+
+    <ImageView
+        android:id="@+id/imageViewLeaf3"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/hojas_01"
+        android:rotation="-125"
+        android:layout_marginLeft="70dp"
+        android:layout_marginBottom="240dp"
+        android:layout_alignParentBottom="true"
+        />
+
+    <ImageView
+        android:id="@+id/imageViewLeaf4"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/hojas_01"
+        android:rotation="-115"
+        android:layout_marginLeft="70dp"
+        android:layout_marginBottom="345dp"
+        android:layout_alignParentBottom="true"
+        />
+
+
+    <ImageView
+        android:id="@+id/imageViewLeaf5"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/hojas_01"
+        android:rotation="-90"
+        android:layout_marginLeft="145dp"
+        android:layout_marginBottom="360dp"
+        android:layout_alignParentBottom="true"
+        />
+
+    <ImageView
+        android:id="@+id/imageViewLeaf6"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/hojas_01"
+        android:rotation="-60"
+        android:layout_marginLeft="210dp"
+        android:layout_marginBottom="310dp"
+        android:layout_alignParentBottom="true"
+        />
+
+
+    <ImageView
+        android:id="@+id/imageViewLeaf7"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/hojas_01"
+        android:rotation="-40"
+        android:layout_marginLeft="220dp"
+        android:layout_marginBottom="230dp"
+        android:layout_alignParentBottom="true"
+        />
+
+
+    <ImageView
+        android:id="@+id/imageViewLeaf8"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/hojas_01"
+        android:rotation="-40"
+        android:layout_marginLeft="260dp"
+        android:layout_marginBottom="220dp"
+        android:layout_alignParentBottom="true"
+        />
+
+
+
+
+</RelativeLayout>
