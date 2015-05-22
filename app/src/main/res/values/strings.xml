@@ -7,6 +7,7 @@
     <string name="title_section2">Perfil</string>
     <string name="title_section3">Emociones</string>
     <string name="title_section4">Tlatoque</string>
+    <string name="title_section5">Locations</string>
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -24,6 +25,7 @@
     <string name="action_register_short">Register</string>
     <string name="prompt_firstname">Firstname</string>
     <string name="prompt_lastname">Lastname</string>
+    <string name="action_add_location">Agregar Ubicacion</string>
 
     <string-array name="leafs_array">
         <item>Hoja 1</item>

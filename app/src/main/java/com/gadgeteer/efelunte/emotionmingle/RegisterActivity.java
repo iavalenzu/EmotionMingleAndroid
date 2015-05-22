@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gadgeteer.efelunte.emotionmingle.model.Emotions;
+import com.gadgeteer.efelunte.emotionmingle.model.Emotion;
 import com.gadgeteer.efelunte.emotionmingle.model.User;
 
 
@@ -136,10 +136,7 @@ public class RegisterActivity extends Activity  {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
 
-            Emotions emotions = new Emotions();
-            emotions.save();
-
-            User user = new User(email, firstname, lastname, "", password, emotions);
+            User user = new User(email, firstname, lastname, "", password);
             user.save();
 
             Toast.makeText(getApplicationContext(), "Usuario guardado", Toast.LENGTH_LONG).show();
@@ -158,6 +155,20 @@ public class RegisterActivity extends Activity  {
         //TODO: Replace this with your own logic
         return password.length() > 4;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainApp.activityResumed();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainApp.activityPaused();
+    }
+
 
 
 }

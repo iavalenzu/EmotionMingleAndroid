@@ -5,9 +5,10 @@
     >
 
     <ImageView
+        android:id="@+id/imageViewScenario"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:src="@drawable/social_escenario2"
+        android:src="@drawable/social_escenario"
         android:alpha="0.4"
         android:scaleType="fitXY"/>
 

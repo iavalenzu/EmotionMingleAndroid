@@ -22,6 +22,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gadgeteer.efelunte.emotionmingle.model.Leafs;
+import com.gadgeteer.efelunte.emotionmingle.model.Session;
+import com.gadgeteer.efelunte.emotionmingle.utils.Util;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
@@ -31,16 +35,8 @@ import java.util.UUID;
 public class TestLeafsActivity extends ActionBarActivity
 {
 
-    private final static String DEVICE_NAME = "EmotionMingle";
-    private final static String DEVICE_PIN_CODE = "5678";
-
-
     private static final int REQUEST_ENABLE_BT = 1;
 
-
-    BluetoothAdapter mBluetoothAdapter;
-
-    EmotionMingleHardware emotionMingleHardware;
 
     Spinner spinnerLeafs;
     TextView textviewLeafValue;
@@ -48,163 +44,22 @@ public class TestLeafsActivity extends ActionBarActivity
 
     Button buttonTurnOff;
 
-    int[] leafsValues = new int[8];
-
-    private final BroadcastReceiver mReceiverFound = new BroadcastReceiver()
-    {
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-
-            Log.i(EmotionMingle.TAG, "Action: " + action);
-
-            if (action.equals(BluetoothDevice.ACTION_FOUND))
-            {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                if (device == null) {
-                    return;
-                }
-
-                String deviceName = device.getName();
-
-                if (deviceName == null) {
-                    return;
-                }
-
-                if (deviceName.equals(DEVICE_NAME)) {
-                    device.createBond();
-                }
-            }
-
-        }
-    };
-
-    private final BroadcastReceiver mReceiverPairingRequest = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-
-            if (action.equals(BluetoothDevice.ACTION_PAIRING_REQUEST)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                if (device == null) {
-                    return;
-                }
-
-                device.setPin(DEVICE_PIN_CODE.getBytes());
-
-            }
-        }
-    };
-
-    private final BroadcastReceiver mReceiverBondStateChanged = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-
-            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED))
-            {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                if(device == null){
-                    return;
-                }
-
-                String name = device.getName();
-
-                if(name == null)
-                {
-                    return;
-                }
-
-                if(name.equals(DEVICE_NAME))
-                {
-                    int bondState = device.getBondState();
-
-                    if(bondState == BluetoothDevice.BOND_BONDED)
-                    {
-                        Log.i(EmotionMingle.TAG, "El device " + name + " esta enlazado!!");
-
-                        try {
-                            emotionMingleHardware =  new EmotionMingleHardware(device);
-
-                            Toast.makeText(TestLeafsActivity.this, "Estas conectado a EmotionMingle", Toast.LENGTH_LONG).show();
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Log.i(EmotionMingle.TAG, "No pude establecer la conexion");
-                            Toast.makeText(TestLeafsActivity.this, "No pude establecer la conexion", Toast.LENGTH_LONG).show();
-
-                            if(emotionMingleHardware != null) {
-                                emotionMingleHardware.close();
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter bluetoothAdapter = MainApp.getBluetoothAdapter();
 
-        if (mBluetoothAdapter == null)
+        if(bluetoothAdapter != null)
         {
-            // Device does not support Bluetooth
-            Toast.makeText(getBaseContext(), "onCreate: Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            if (!mBluetoothAdapter.isEnabled())
+            if(!bluetoothAdapter.isEnabled())
             {
-                Log.i(EmotionMingle.TAG, "El bluetooth esta desactivado, se debe habilitar");
-
                 Intent turnOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(turnOnIntent, REQUEST_ENABLE_BT);
             }
-            else
-            {
-                BluetoothDevice bondedDevice = getBondedDevice(DEVICE_NAME);
-
-                if(bondedDevice == null)
-                {
-                    Log.i(EmotionMingle.TAG, "No encuentro el dispositivo en los paired devices.");
-
-                    mBluetoothAdapter.startDiscovery();
-
-                }
-                else
-                {
-                    try
-                    {
-                        bondedDevice.setPin(DEVICE_PIN_CODE.getBytes());
-                        emotionMingleHardware =  new EmotionMingleHardware(bondedDevice);
-
-                        Toast.makeText(TestLeafsActivity.this, "Estas conectado a EmotionMingle", Toast.LENGTH_LONG).show();
-
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                        Log.i(EmotionMingle.TAG, "No pude establecer la conexion");
-
-                        if(emotionMingleHardware != null){
-                            emotionMingleHardware.close();
-                        }
-                    }
-
-
-                }
-            }
         }
-
 
 
         spinnerLeafs = (Spinner)findViewById(R.id.spinner_leafs);
@@ -230,7 +85,21 @@ public class TestLeafsActivity extends ActionBarActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                seekBarLeafValue.setProgress(leafsValues[position]);
+
+                Session session = Util.getSession();
+
+                if(session != null)
+                {
+                    Leafs leafs = session.getLeafs();
+
+                    if(leafs != null)
+                    {
+                        seekBarLeafValue.setProgress(leafs.getLeafValue(position+1));
+                    }
+                }
+
+
+
             }
 
             @Override
@@ -257,6 +126,7 @@ public class TestLeafsActivity extends ActionBarActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+                EmotionMingleHardware emotionMingleHardware = MainApp.getEmotionMingleHardware();
 
                 if(emotionMingleHardware != null)
                 {
@@ -265,7 +135,27 @@ public class TestLeafsActivity extends ActionBarActivity
                     int hoja = position + 1;
                     int value = seekBar.getProgress();
 
-                    leafsValues[position] = value;
+                    Session session = Util.getSession();
+
+                    if(session != null)
+                    {
+                        Leafs leafs = session.getLeafs();
+
+                        if(leafs != null)
+                        {
+                            leafs.setLeafValue(hoja, value);
+                            leafs.save();
+                        }
+                        else
+                        {
+                            Log.i(EmotionMingle.TAG, "TestLeafsActivity > Leafs is NULL");
+                        }
+                    }
+                    else
+                    {
+                        Log.i(EmotionMingle.TAG, "TestLeafsActivity > Session is NULL");
+                    }
+
 
                     try {
                         emotionMingleHardware.changeLeaf(hoja, value);
@@ -291,11 +181,41 @@ public class TestLeafsActivity extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
+
+                EmotionMingleHardware emotionMingleHardware = MainApp.getEmotionMingleHardware();
+
                 if(emotionMingleHardware != null)
                 {
+
+
+
                     try
                     {
                         emotionMingleHardware.turnOff();
+
+
+                        Session session = Util.getSession();
+
+                        if(session != null)
+                        {
+                            Leafs leafs = session.getLeafs();
+
+                            if(leafs != null)
+                            {
+                                leafs.reset();
+                                leafs.save();
+                            }
+                            else
+                            {
+                                Log.i(EmotionMingle.TAG, "TestLeafsActivity > Leafs is NULL");
+                            }
+                        }
+                        else
+                        {
+                            Log.i(EmotionMingle.TAG, "TestLeafsActivity > Session is NULL");
+                        }
+
+
                     }
                     catch (IOException e)
                     {
@@ -312,15 +232,6 @@ public class TestLeafsActivity extends ActionBarActivity
         });
 
 
-        // Register the BroadcastReceiver
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiverFound, filter);
-
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
-        registerReceiver(mReceiverPairingRequest, filter2);
-
-        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(mReceiverBondStateChanged, filter3);
 
 
     }
@@ -330,41 +241,22 @@ public class TestLeafsActivity extends ActionBarActivity
     protected void onDestroy() {
         super.onDestroy();
 
-        unregisterReceiver(mReceiverFound);
-        unregisterReceiver(mReceiverPairingRequest);
-        unregisterReceiver(mReceiverBondStateChanged);
-
-
-        if(emotionMingleHardware != null)
-        {
-            emotionMingleHardware.close();
-        }
-
 
     }
 
-    public BluetoothDevice getBondedDevice(String name)
-    {
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        // If there are paired devices
-        if (pairedDevices.size() > 0) {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
-                if(device.getName().equals(name)){
-                    return device;
-                }
-            }
-        }
 
-        return null;
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(requestCode == REQUEST_ENABLE_BT)
         {
+            BluetoothAdapter mBluetoothAdapter =  MainApp.getBluetoothAdapter();
+
+            if(mBluetoothAdapter == null){
+                return;
+            }
+
             if(mBluetoothAdapter.isEnabled())
             {
                 Log.i(EmotionMingle.TAG, "Bluetooth turned on!!!");
@@ -400,7 +292,13 @@ public class TestLeafsActivity extends ActionBarActivity
 
         if (id == R.id.action_find_device) {
 
-            mBluetoothAdapter.startDiscovery();
+            BluetoothAdapter bluetoothAdapter = MainApp.getBluetoothAdapter();
+
+            if(bluetoothAdapter != null)
+            {
+                bluetoothAdapter.startDiscovery();
+            }
+
 
             return true;
         }
@@ -410,6 +308,18 @@ public class TestLeafsActivity extends ActionBarActivity
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainApp.activityResumed();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainApp.activityPaused();
+    }
 
 
 

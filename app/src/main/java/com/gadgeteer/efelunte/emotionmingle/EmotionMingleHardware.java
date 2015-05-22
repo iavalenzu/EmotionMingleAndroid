@@ -59,7 +59,7 @@ public class EmotionMingleHardware {
 
     }
 
-    public void changeBar(int sad, int tired, int stressed, int angry, int happy, int energetic, int relaxed, int calmed) throws IOException {
+    public void changeBar(long sad, long tired, long stressed, long angry, long happy, long energetic, long relaxed, long calmed) throws IOException {
 
         String message = "barra" + ":" + sad + ":" + tired + ":" + stressed + ":" + angry + ":" + happy + ":" + energetic + ":" + relaxed + ":" + calmed + "\n";
 

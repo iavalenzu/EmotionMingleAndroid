@@ -8,6 +8,7 @@ import com.orm.SugarRecord;
 public class Session extends SugarRecord<Session> {
 
     User user;
+    Leafs leafs;
 
     public Session(){
 
@@ -19,5 +20,13 @@ public class Session extends SugarRecord<Session> {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Leafs getLeafs() {
+        return leafs;
+    }
+
+    public void setLeafs(Leafs leafs) {
+        this.leafs = leafs;
     }
 }

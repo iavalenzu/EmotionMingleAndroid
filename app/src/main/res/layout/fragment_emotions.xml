@@ -18,175 +18,58 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:paddingBottom="30dp"
-            android:paddingTop="30dp">
+            android:background="#532876"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Carolina se sentía:"
+                android:text="Carolina se sentía"
                 android:id="@+id/label_estado_actual"
                 android:textSize="20dp"
+                android:padding="10dp"
+                android:background="#ffffff"
                 android:textColor="#ff000000"
                 android:textIsSelectable="true" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:id="@+id/texto_estado_actual"
-                android:textSize="25dp"
-                android:textColor="#ff000000"
-                android:padding="20dp"/>
+            <ImageView
+                android:id="@+id/imageview_current_face"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/cara_agotado"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                />
 
             </LinearLayout>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="¿Como te sientes ahora?"
+        <ImageView
             android:id="@+id/pregunta"
-            android:gravity="center_horizontal"
-            android:textSize="20dp"
-            android:textColor="#ff000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@id/layout_estado_actual"
-            android:padding="15dp"/>
+            android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:padding="10dp"
+            android:src="@drawable/rompe"/>
 
-        <LinearLayout
-            android:id="@+id/estados"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
+
+
+        <ImageView
+            android:id="@+id/buttons"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/pregunta"
-            android:padding="10dp">
+            android:src="@drawable/rompecabezas"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
-
-                <Button
-                    android:id="@+id/button_estresado"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="145dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
-                    android:text="Estresado" />
-
-                <Button
-                    android:id="@+id/button_agotado"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="145dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
-                    android:text="Agotado" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
-
-                <Button
-                    android:id="@+id/button_enojado"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="145dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
-                    android:text="Enojado" />
-
-                <Button
-                    android:id="@+id/button_triste"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="145dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
-                    android:text="Triste" />
-
-
-                </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
-
-                <Button
-                    android:id="@+id/button_feliz"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="145dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
-                    android:text="Feliz" />
-
-                <Button
-                    android:id="@+id/button_tranquilo"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="145dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
-                    android:text="Tranquilo" />
-
-
-                </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
-
-                <Button
-                    android:id="@+id/button_energico"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="145dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
-                    android:text="Energico" />
-
-                <Button
-                    android:id="@+id/button_relajado"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="145dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center"
-                    android:text="Relajado" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/button1"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="145dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                android:text="Guardar" />
-
-            <Button
-                android:id="@+id/button2"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="145dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center"
-                android:text="Cancelar" />
-
-        </LinearLayout>
 
     </RelativeLayout>
 

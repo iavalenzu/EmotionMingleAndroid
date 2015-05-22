@@ -4,11 +4,18 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.gadgeteer.efelunte.emotionmingle.model.Emotion;
+import com.gadgeteer.efelunte.emotionmingle.model.Leafs;
+import com.gadgeteer.efelunte.emotionmingle.model.Location;
+import com.gadgeteer.efelunte.emotionmingle.model.Session;
+import com.gadgeteer.efelunte.emotionmingle.model.User;
+import com.gadgeteer.efelunte.emotionmingle.utils.Util;
 
 
 /**
@@ -24,6 +31,8 @@ public class TreeFragment extends Fragment {
 
     private static final int ARG_SECTION_NUMBER = 0;
 
+
+    private User loggedUser;
 
     /**
      * Use this factory method to create a new instance of
@@ -45,17 +54,19 @@ public class TreeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Log.v(EmotionMingle.TAG, "onCreateView()");
+
         View view = inflater.inflate(R.layout.fragment_tree, container, false);
 
-        ImageView imageViewBackground = (ImageView) view.findViewById(R.id.imageViewBackground);
+        ImageView imageViewBackground = (ImageView) view.findViewById(R.id.imageViewScenario);
 
+        ImageView imageViewStar = (ImageView) view.findViewById(R.id.imageViewStar);
 
         ImageView imageViewLeaf1 = (ImageView) view.findViewById(R.id.imageViewLeaf1);
         ImageView imageViewLeaf2 = (ImageView) view.findViewById(R.id.imageViewLeaf2);
@@ -66,21 +77,140 @@ public class TreeFragment extends Fragment {
         ImageView imageViewLeaf7 = (ImageView) view.findViewById(R.id.imageViewLeaf7);
         ImageView imageViewLeaf8 = (ImageView) view.findViewById(R.id.imageViewLeaf8);
 
-        imageViewLeaf1.setImageResource(getLeaf(0));
-        imageViewLeaf2.setImageResource(getLeaf(1));
-        imageViewLeaf3.setImageResource(getLeaf(2));
-        imageViewLeaf4.setImageResource(getLeaf(3));
-        imageViewLeaf5.setImageResource(getLeaf(4));
-        imageViewLeaf6.setImageResource(getLeaf(5));
-        imageViewLeaf7.setImageResource(getLeaf(6));
-        imageViewLeaf8.setImageResource(getLeaf(7));
+
+        Session session = Util.getSession();
+
+        if(session != null)
+        {
+            loggedUser = session.getUser();
+
+            if(loggedUser != null)
+            {
+                Emotion lastEmotion = loggedUser.getLastEmotion();
+
+                if(lastEmotion != null)
+                {
+
+                    Log.v(EmotionMingle.TAG, "LastEmotion: " + lastEmotion.getType());
+
+                    imageViewStar.setImageResource(getStar(lastEmotion));
+
+                }
+
+                Location location = loggedUser.getSelectedLocation();
+
+                if(location != null)
+                {
+                    Log.v(EmotionMingle.TAG, "SelectedLocation: " + location.getType());
+
+                    imageViewBackground.setImageResource(getBackground(location));
+
+
+                }
+
+
+            }
+
+            Leafs leafs = session.getLeafs();
+
+            if(leafs != null)
+            {
+                imageViewLeaf1.setImageResource(getLeaf(leafs.getLeaf1()));
+                imageViewLeaf2.setImageResource(getLeaf(leafs.getLeaf2()));
+                imageViewLeaf3.setImageResource(getLeaf(leafs.getLeaf3()));
+                imageViewLeaf4.setImageResource(getLeaf(leafs.getLeaf4()));
+                imageViewLeaf5.setImageResource(getLeaf(leafs.getLeaf5()));
+                imageViewLeaf6.setImageResource(getLeaf(leafs.getLeaf6()));
+                imageViewLeaf7.setImageResource(getLeaf(leafs.getLeaf7()));
+                imageViewLeaf8.setImageResource(getLeaf(leafs.getLeaf8()));
+
+            }
+
+
+        }
+
+
+
+
+
 
         return view;
+    }
+
+    private int getBackground(Location location) {
+
+        String type = location.getType();
+
+        if(type.equals(Location.TYPE_CUIDADO))
+        {
+            return R.drawable.hospital_escenario;
+        }
+        else if(type.equals(Location.TYPE_DEPORTE))
+        {
+            return R.drawable.deportivo_escenario;
+        }
+        else if(type.equals(Location.TYPE_PERSONAL))
+        {
+            return R.drawable.personal_escenario;
+        }
+        else if(type.equals(Location.TYPE_RECREACIONAL))
+        {
+            return R.drawable.social_escenario;
+        }
+        else
+        {
+            return R.drawable.social_escenario;
+        }
+
     }
 
     public void onButtonPressed(Uri uri) {
     }
 
+
+    public int getStar(Emotion emotion)
+    {
+        if(emotion == null)
+        {
+            return R.drawable.solyluna2_07;
+        }
+        else if(emotion.isType(Emotion.SAD))
+        {
+            return R.drawable.solyluna2_08;
+        }
+        else if(emotion.isType(Emotion.TIRED))
+        {
+            return R.drawable.solyluna2_06;
+        }
+        else if(emotion.isType(Emotion.STRESSED))
+        {
+            return R.drawable.solyluna2_04;
+        }
+        else if(emotion.isType(Emotion.ANGRY))
+        {
+            return R.drawable.solyluna2_02;
+        }
+        else if(emotion.isType(Emotion.HAPPY))
+        {
+            return R.drawable.solyluna2_07;
+        }
+        else if(emotion.isType(Emotion.ENERGETIC))
+        {
+            return R.drawable.solyluna2_03;
+        }
+        else if(emotion.isType(Emotion.RELAXED))
+        {
+            return R.drawable.solyluna2_05;
+        }
+        else if(emotion.isType(Emotion.CALMED))
+        {
+            return R.drawable.solyluna2_01;
+        }
+        else
+        {
+            return R.drawable.solyluna2_07;
+        }
+    }
 
     public int getLeaf(int level)
     {

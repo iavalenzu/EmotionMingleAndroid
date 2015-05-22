@@ -1,30 +1,23 @@
 package com.gadgeteer.efelunte.emotionmingle;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.gadgeteer.efelunte.emotionmingle.model.Emotion;
+import com.gadgeteer.efelunte.emotionmingle.model.Session;
+import com.gadgeteer.efelunte.emotionmingle.model.User;
+import com.gadgeteer.efelunte.emotionmingle.utils.Util;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Set;
-import java.util.UUID;
 
 
 public class TestBarActivity extends ActionBarActivity
@@ -36,10 +29,6 @@ public class TestBarActivity extends ActionBarActivity
 
     private static final int REQUEST_ENABLE_BT = 1;
 
-
-    BluetoothAdapter mBluetoothAdapter;
-
-    EmotionMingleHardware emotionMingleHardware;
 
     TextView textviewBarSadValue;
     SeekBar seekBarSadValue;
@@ -67,220 +56,139 @@ public class TestBarActivity extends ActionBarActivity
 
     Button buttonTurnOff;
 
-    private final BroadcastReceiver mReceiverFound = new BroadcastReceiver()
-    {
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-
-            Log.i(EmotionMingle.TAG, "Action: " + action);
-
-            if (action.equals(BluetoothDevice.ACTION_FOUND)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                if (device == null) {
-                    return;
-                }
-
-                String deviceName = device.getName();
-
-                if (deviceName == null) {
-                    return;
-                }
-
-                if (deviceName.equals(DEVICE_NAME)) {
-                    device.createBond();
-                }
-            }
-
-        }
-    };
-
-    private final BroadcastReceiver mReceiverPairingRequest = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-
-            if (action.equals(BluetoothDevice.ACTION_PAIRING_REQUEST)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                if (device == null) {
-                    return;
-                }
-
-                device.setPin(DEVICE_PIN_CODE.getBytes());
-
-            }
-        }
-    };
-
-    private final BroadcastReceiver mReceiverBondStateChanged = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-
-            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED))
-            {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                if(device == null){
-                    return;
-                }
-
-                String name = device.getName();
-
-                if(name == null)
-                {
-                    return;
-                }
-
-                if(name.equals(DEVICE_NAME))
-                {
-                    int bondState = device.getBondState();
-
-                    if(bondState == BluetoothDevice.BOND_BONDED)
-                    {
-                        Log.i(EmotionMingle.TAG, "El device " + name + " esta enlazado!!");
-
-                        try {
-                            emotionMingleHardware =  new EmotionMingleHardware(device);
-
-                            Toast.makeText(TestBarActivity.this, "Estas conectado a EmotionMingle", Toast.LENGTH_LONG).show();
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Log.i(EmotionMingle.TAG, "No pude establecer la conexion");
-                            if(emotionMingleHardware != null) {
-                                emotionMingleHardware.close();
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bar_test);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter bluetoothAdapter = MainApp.getBluetoothAdapter();
 
-        if (mBluetoothAdapter == null)
+        if(bluetoothAdapter != null)
         {
-            // Device does not support Bluetooth
-            Toast.makeText(getBaseContext(), "onCreate: Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            if (!mBluetoothAdapter.isEnabled())
+            if(!bluetoothAdapter.isEnabled())
             {
-                Log.i(EmotionMingle.TAG, "El bluetooth esta desactivado, se debe habilitar");
-
                 Intent turnOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(turnOnIntent, REQUEST_ENABLE_BT);
             }
-            else
-            {
-                BluetoothDevice bondedDevice = getBondedDevice(DEVICE_NAME);
-
-                if(bondedDevice == null)
-                {
-                    Log.i(EmotionMingle.TAG, "No encuentro el dispositivo en los paired devices.");
-
-                    mBluetoothAdapter.startDiscovery();
-
-                }
-                else
-                {
-                    try
-                    {
-                        bondedDevice.setPin(DEVICE_PIN_CODE.getBytes());
-                        emotionMingleHardware =  new EmotionMingleHardware(bondedDevice);
-
-                        Toast.makeText(TestBarActivity.this, "Estas conectado a EmotionMingle", Toast.LENGTH_LONG).show();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                        Log.i(EmotionMingle.TAG, "No pude establecer la conexion");
-
-                        if(emotionMingleHardware != null) {
-                            emotionMingleHardware.close();
-                        }
-                    }
-
-
-                }
-            }
         }
+
+        Session session = Util.getSession();
+
+        User loggedUser = session.getUser();
+
 
 
         textviewBarSadValue = (TextView) findViewById(R.id.textview_bar_sad_value);
-        textviewBarSadValue.setText("0");
 
         seekBarSadValue = (SeekBar) findViewById(R.id.seekbar_bar_sad_value);
-        seekBarSadValue.setProgress(0);
-        seekBarSadValue.setMax(12);
+
+        if(loggedUser != null)
+        {
+            long sad = loggedUser.getEmotionCount(Emotion.SAD);
+            textviewBarSadValue.setText("" + sad);
+            seekBarSadValue.setProgress((int) sad);
+        }
+
+        seekBarSadValue.setMax(500);
 
 
         textviewBarTiredValue = (TextView) findViewById(R.id.textview_bar_tired_value);
-        textviewBarTiredValue.setText("0");
 
         seekBarTiredValue = (SeekBar) findViewById(R.id.seekbar_bar_tired_value);
-        seekBarTiredValue.setProgress(0);
-        seekBarTiredValue.setMax(12);
+
+        if(loggedUser != null)
+        {
+            long tired = loggedUser.getEmotionCount(Emotion.TIRED);
+            textviewBarTiredValue.setText("" + tired);
+            seekBarTiredValue.setProgress((int) tired);
+        }
+
+        seekBarTiredValue.setMax(500);
 
 
         textviewBarStressedValue = (TextView) findViewById(R.id.textview_bar_stressed_value);
-        textviewBarStressedValue.setText("0");
 
         seekBarStressedValue = (SeekBar) findViewById(R.id.seekbar_bar_stressed_value);
-        seekBarStressedValue.setProgress(0);
-        seekBarStressedValue.setMax(12);
+
+        if(loggedUser != null)
+        {
+            long stressed = loggedUser.getEmotionCount(Emotion.STRESSED);
+            textviewBarStressedValue.setText("" + stressed);
+            seekBarStressedValue.setProgress((int) stressed);
+        }
+
+        seekBarStressedValue.setMax(500);
 
 
         textviewBarAngryValue = (TextView) findViewById(R.id.textview_bar_angry_value);
-        textviewBarAngryValue.setText("0");
 
         seekBarAngryValue = (SeekBar) findViewById(R.id.seekbar_bar_angry_value);
-        seekBarAngryValue.setProgress(0);
-        seekBarAngryValue.setMax(12);
+
+        if(loggedUser != null)
+        {
+            long angry = loggedUser.getEmotionCount(Emotion.ANGRY);
+            textviewBarAngryValue.setText("" + angry);
+            seekBarAngryValue.setProgress((int) angry);
+        }
+
+        seekBarAngryValue.setMax(500);
 
 
         textviewBarHappyValue = (TextView) findViewById(R.id.textview_bar_happy_value);
-        textviewBarHappyValue.setText("0");
 
         seekBarHappyValue = (SeekBar) findViewById(R.id.seekbar_bar_happy_value);
-        seekBarHappyValue.setProgress(0);
-        seekBarHappyValue.setMax(12);
+
+        if(loggedUser != null)
+        {
+            long happy = loggedUser.getEmotionCount(Emotion.HAPPY);
+            textviewBarHappyValue.setText("" + happy);
+            seekBarHappyValue.setProgress((int) happy);
+        }
+
+        seekBarHappyValue.setMax(500);
 
 
         textviewBarEnergeticValue = (TextView) findViewById(R.id.textview_bar_energetic_value);
-        textviewBarEnergeticValue.setText("0");
 
         seekBarEnergecticValue = (SeekBar) findViewById(R.id.seekbar_bar_energetic_value);
-        seekBarEnergecticValue.setProgress(0);
-        seekBarEnergecticValue.setMax(12);
+
+        if(loggedUser != null)
+        {
+            long energetic = loggedUser.getEmotionCount(Emotion.ENERGETIC);
+            textviewBarEnergeticValue.setText("" + energetic);
+            seekBarEnergecticValue.setProgress((int) energetic);
+        }
+
+        seekBarEnergecticValue.setMax(500);
 
 
         textviewBarRelaxedValue = (TextView) findViewById(R.id.textview_bar_relaxed_value);
-        textviewBarRelaxedValue.setText("0");
 
         seekBarRelaxedValue = (SeekBar) findViewById(R.id.seekbar_bar_relaxed_value);
-        seekBarRelaxedValue.setProgress(0);
-        seekBarRelaxedValue.setMax(12);
+
+        if(loggedUser != null)
+        {
+            long relaxed = loggedUser.getEmotionCount(Emotion.RELAXED);
+            textviewBarRelaxedValue.setText("" + relaxed);
+            seekBarRelaxedValue.setProgress((int) relaxed);
+        }
+
+        seekBarRelaxedValue.setMax(500);
 
 
         textviewBarCalmedValue = (TextView) findViewById(R.id.textview_bar_calmed_value);
-        textviewBarCalmedValue.setText("0");
 
         seekBarCalmedValue = (SeekBar) findViewById(R.id.seekbar_bar_calmed_value);
-        seekBarCalmedValue.setProgress(0);
-        seekBarCalmedValue.setMax(12);
+
+        if(loggedUser != null)
+        {
+            long calmed = loggedUser.getEmotionCount(Emotion.CALMED);
+            textviewBarCalmedValue.setText("" + calmed);
+            seekBarCalmedValue.setProgress((int) calmed);
+        }
+
+        seekBarCalmedValue.setMax(500);
 
         buttonTurnOff = (Button) findViewById(R.id.button_turn_off);
 
@@ -288,6 +196,8 @@ public class TestBarActivity extends ActionBarActivity
             @Override
             public void onClick(View v)
             {
+                EmotionMingleHardware emotionMingleHardware = MainApp.getEmotionMingleHardware();
+
                 if(emotionMingleHardware != null)
                 {
                     try
@@ -433,24 +343,13 @@ public class TestBarActivity extends ActionBarActivity
         });
 
 
-
-
-        // Register the BroadcastReceiver
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiverFound, filter);
-
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
-        registerReceiver(mReceiverPairingRequest, filter2);
-
-        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(mReceiverBondStateChanged, filter3);
-
-
     }
 
 
     public void changeBarEmotionMingle()
     {
+        EmotionMingleHardware emotionMingleHardware = MainApp.getEmotionMingleHardware();
+
         if(emotionMingleHardware != null)
         {
             int sad = seekBarSadValue.getProgress();
@@ -462,19 +361,13 @@ public class TestBarActivity extends ActionBarActivity
             int relaxed = seekBarRelaxedValue.getProgress();
             int calmed = seekBarCalmedValue.getProgress();
 
-            try
-            {
+            try {
                 emotionMingleHardware.changeBar(sad, tired, stressed, angry, happy, energetic, relaxed, calmed);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
-                Log.i(EmotionMingle.TAG, "Ocurrio un error al enviar el comando");
-                if(emotionMingleHardware != null) {
-                    emotionMingleHardware.close();
-                }
-
             }
+
+
         }
 
     }
@@ -484,45 +377,20 @@ public class TestBarActivity extends ActionBarActivity
     protected void onDestroy() {
         super.onDestroy();
 
-        unregisterReceiver(mReceiverFound);
-        unregisterReceiver(mReceiverPairingRequest);
-        unregisterReceiver(mReceiverBondStateChanged);
-
-
-        if(emotionMingleHardware != null)
-        {
-            emotionMingleHardware.close();
-        }
-
-
     }
 
-    public BluetoothDevice getBondedDevice(String name)
-    {
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        // If there are paired devices
-        if (pairedDevices.size() > 0) {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
-                if(device.getName().equals(name)){
-                    return device;
-                }
-            }
-        }
-
-        return null;
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(requestCode == REQUEST_ENABLE_BT)
         {
-            if(mBluetoothAdapter.isEnabled())
+            BluetoothAdapter bluetoothAdapter = MainApp.getBluetoothAdapter();
+
+            if(bluetoothAdapter.isEnabled())
             {
                 Log.i(EmotionMingle.TAG, "Bluetooth turned on!!!");
-                mBluetoothAdapter.startDiscovery();
+                bluetoothAdapter.startDiscovery();
             }
             else
             {
@@ -554,7 +422,12 @@ public class TestBarActivity extends ActionBarActivity
 
         if (id == R.id.action_find_device) {
 
-            mBluetoothAdapter.startDiscovery();
+            BluetoothAdapter bluetoothAdapter = MainApp.getBluetoothAdapter();
+
+            if(bluetoothAdapter != null)
+            {
+                bluetoothAdapter.startDiscovery();
+            }
 
             return true;
         }
@@ -564,6 +437,18 @@ public class TestBarActivity extends ActionBarActivity
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainApp.activityResumed();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainApp.activityPaused();
+    }
 
 
 

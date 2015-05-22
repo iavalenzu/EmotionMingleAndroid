@@ -27,10 +27,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.gadgeteer.efelunte.emotionmingle.model.Leafs;
 import com.gadgeteer.efelunte.emotionmingle.model.Session;
 import com.gadgeteer.efelunte.emotionmingle.model.User;
 import com.gadgeteer.efelunte.emotionmingle.utils.Util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,7 +152,17 @@ public class LoginActivity extends Activity  {
             {
                 Session session = Util.getSession();
 
+                Leafs leafs = new Leafs();
+                leafs.save();
+
+                try {
+                    MainApp.turnOff();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 session.setUser(loggedUser);
+                session.setLeafs(leafs);
                 session.save();
 
                 finish();
@@ -172,6 +184,20 @@ public class LoginActivity extends Activity  {
         //TODO: Replace this with your own logic
         return password.length() > 4;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainApp.activityResumed();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainApp.activityPaused();
+    }
+
 
 }
 

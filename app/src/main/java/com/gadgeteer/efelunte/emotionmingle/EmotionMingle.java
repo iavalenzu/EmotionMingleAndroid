@@ -34,7 +34,10 @@ import java.util.Set;
 public class EmotionMingle extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+
     static final public String TAG = "EmotionMingleTag";
+
+    private static final int REQUEST_ENABLE_BT = 1;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -45,8 +48,6 @@ public class EmotionMingle extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-
-    public Session session;
 
 
     @Override
@@ -62,17 +63,81 @@ public class EmotionMingle extends ActionBarActivity
         mNavigationDrawerFragment.setUp( R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
 
-        session = Util.getSession();
+        BluetoothAdapter bluetoothAdapter = MainApp.getBluetoothAdapter();
 
-        Log.i(EmotionMingle.TAG, "SessionId: " + session.getId());
-
-        User loggedUser = session.getUser();
-
-        if(loggedUser == null)
+        if(bluetoothAdapter != null)
         {
-            Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(loginIntent);
+            if(!bluetoothAdapter.isEnabled())
+            {
+                Intent turnOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(turnOnIntent, REQUEST_ENABLE_BT);
+            }
+        }
 
+        Session session = Util.getSession();
+
+        if(session != null)
+        {
+            User loggedUser = session.getUser();
+
+            if(loggedUser == null)
+            {
+                Intent loginIntent = new Intent(EmotionMingle.this, LoginActivity.class);
+                startActivity(loginIntent);
+
+            }
+        }
+
+        Intent intent = getIntent();
+
+        if(intent != null)
+        {
+            if(intent.hasExtra(MainApp.SHOW_FRAGMENT))
+            {
+                int fragmentPos = intent.getIntExtra(MainApp.SHOW_FRAGMENT, 0);
+
+                onNavigationDrawerItemSelected(fragmentPos);
+
+            }
+            else
+            {
+                Log.i(EmotionMingle.TAG, "Intent does not have SHOW_FRAGMENT extra!!");
+            }
+        }
+        else
+        {
+            Log.i(EmotionMingle.TAG, "Intent is NULL");
+        }
+
+
+
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.i(EmotionMingle.TAG, "onNewIntent()");
+
+        if(intent != null)
+        {
+            if(intent.hasExtra(MainApp.SHOW_FRAGMENT))
+            {
+                int fragmentPos = intent.getIntExtra(MainApp.SHOW_FRAGMENT, 0);
+
+                Log.i(EmotionMingle.TAG, "FrgamentPos: " + fragmentPos);
+
+                onNavigationDrawerItemSelected(fragmentPos);
+
+            }
+            else
+            {
+                Log.i(EmotionMingle.TAG, "Intent does not have SHOW_FRAGMENT extra!!");
+            }
+        }
+        else
+        {
+            Log.i(EmotionMingle.TAG, "Intent is NULL");
         }
 
 
@@ -81,23 +146,55 @@ public class EmotionMingle extends ActionBarActivity
     @Override
     protected void onResume() {
         super.onResume();
-
-
-        session = Util.getSession();
-
-        Log.i(EmotionMingle.TAG, "SessionId: " + session.getId());
-
-
-        User loggedUser = session.getUser();
-
-        if(loggedUser != null)
-        {
-            Log.i(EmotionMingle.TAG, "Email: " + loggedUser.getEmail());
-            Log.i(EmotionMingle.TAG, "Pass: " + loggedUser.getPass());
-        }
-
+        MainApp.activityResumed();
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainApp.activityPaused();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        /*
+        EmotionMingleHardware emotionMingleHardware = MainApp.getEmotionMingleHardware();
+
+        if(emotionMingleHardware != null)
+        {
+            emotionMingleHardware.close();;
+        }
+        */
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == REQUEST_ENABLE_BT)
+        {
+            BluetoothAdapter mBluetoothAdapter =  MainApp.getBluetoothAdapter();
+
+            if(mBluetoothAdapter == null){
+                return;
+            }
+
+            if(mBluetoothAdapter.isEnabled())
+            {
+                Log.i(EmotionMingle.TAG, "Bluetooth turned on!!!");
+                mBluetoothAdapter.startDiscovery();
+            }
+            else
+            {
+                Log.i(EmotionMingle.TAG, "Bluetooth is NOT turned on!!!");
+            }
+        }
+    }
+
+
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
@@ -126,16 +223,30 @@ public class EmotionMingle extends ActionBarActivity
                         .replace(R.id.container, TlatoqueFragment.newInstance())
                         .commit();
                 break;
+
             case 4:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, LocationsFragment.newInstance())
+                        .commit();
+                break;
+
+            case 5:
 
                 Session session = Util.getSession();
 
                 session.setUser(null);
+                session.setLeafs(null);
                 session.save();
+
+                try {
+                    MainApp.turnOff();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
 
                 Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(loginIntent);
-                finish();
 
 
                 break;
@@ -159,6 +270,9 @@ public class EmotionMingle extends ActionBarActivity
                 break;
             case 3:
                 mTitle = getString(R.string.title_section4);
+                break;
+            case 4:
+                mTitle = getString(R.string.title_section5);
                 break;
         }
     }
