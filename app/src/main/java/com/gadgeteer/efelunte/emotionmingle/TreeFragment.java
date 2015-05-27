@@ -17,6 +17,9 @@ import com.gadgeteer.efelunte.emotionmingle.model.Session;
 import com.gadgeteer.efelunte.emotionmingle.model.User;
 import com.gadgeteer.efelunte.emotionmingle.utils.Util;
 
+import java.util.Observable;
+import java.util.Observer;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,7 +29,7 @@ import com.gadgeteer.efelunte.emotionmingle.utils.Util;
  * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TreeFragment extends Fragment {
+public class TreeFragment extends Fragment implements Observer {
 
 
     private static final int ARG_SECTION_NUMBER = 0;
@@ -56,6 +59,18 @@ public class TreeFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+
+    ImageView imageViewBackground;
+    ImageView imageViewStar;
+    ImageView imageViewLeaf1;
+    ImageView imageViewLeaf2;
+    ImageView imageViewLeaf3;
+    ImageView imageViewLeaf4;
+    ImageView imageViewLeaf5;
+    ImageView imageViewLeaf6;
+    ImageView imageViewLeaf7;
+    ImageView imageViewLeaf8;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,20 +79,27 @@ public class TreeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_tree, container, false);
 
-        ImageView imageViewBackground = (ImageView) view.findViewById(R.id.imageViewScenario);
+        imageViewBackground = (ImageView) view.findViewById(R.id.imageViewScenario);
 
-        ImageView imageViewStar = (ImageView) view.findViewById(R.id.imageViewStar);
+        imageViewStar = (ImageView) view.findViewById(R.id.imageViewStar);
 
-        ImageView imageViewLeaf1 = (ImageView) view.findViewById(R.id.imageViewLeaf1);
-        ImageView imageViewLeaf2 = (ImageView) view.findViewById(R.id.imageViewLeaf2);
-        ImageView imageViewLeaf3 = (ImageView) view.findViewById(R.id.imageViewLeaf3);
-        ImageView imageViewLeaf4 = (ImageView) view.findViewById(R.id.imageViewLeaf4);
-        ImageView imageViewLeaf5 = (ImageView) view.findViewById(R.id.imageViewLeaf5);
-        ImageView imageViewLeaf6 = (ImageView) view.findViewById(R.id.imageViewLeaf6);
-        ImageView imageViewLeaf7 = (ImageView) view.findViewById(R.id.imageViewLeaf7);
-        ImageView imageViewLeaf8 = (ImageView) view.findViewById(R.id.imageViewLeaf8);
+        imageViewLeaf1 = (ImageView) view.findViewById(R.id.imageViewLeaf1);
+        imageViewLeaf2 = (ImageView) view.findViewById(R.id.imageViewLeaf2);
+        imageViewLeaf3 = (ImageView) view.findViewById(R.id.imageViewLeaf3);
+        imageViewLeaf4 = (ImageView) view.findViewById(R.id.imageViewLeaf4);
+        imageViewLeaf5 = (ImageView) view.findViewById(R.id.imageViewLeaf5);
+        imageViewLeaf6 = (ImageView) view.findViewById(R.id.imageViewLeaf6);
+        imageViewLeaf7 = (ImageView) view.findViewById(R.id.imageViewLeaf7);
+        imageViewLeaf8 = (ImageView) view.findViewById(R.id.imageViewLeaf8);
+
+        updateView();
 
 
+        return view;
+    }
+
+    public void updateView()
+    {
         Session session = Util.getSession();
 
         if(session != null)
@@ -129,13 +151,8 @@ public class TreeFragment extends Fragment {
 
         }
 
-
-
-
-
-
-        return view;
     }
+
 
     private int getBackground(Location location) {
 
@@ -249,6 +266,19 @@ public class TreeFragment extends Fragment {
         super.onDetach();
     }
 
+    @Override
+    public void update(Observable observable, Object data) {
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateView();
+            }
+        });
+
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -261,6 +291,22 @@ public class TreeFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(Uri uri);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainApp.addTreeObserver(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        MainApp.removeTreeObserver(this);
+
     }
 
 }

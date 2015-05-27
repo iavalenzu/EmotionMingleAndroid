@@ -5,6 +5,8 @@ import android.util.Log;
 import com.gadgeteer.efelunte.emotionmingle.EmotionMingle;
 import com.orm.SugarRecord;
 
+import java.util.Date;
+
 /**
  * Created by ismaelvalenzuela on 05-05-15.
  */
@@ -19,10 +21,12 @@ public class Leafs extends SugarRecord<Leafs> {
     private int leaf7 = 0;
     private int leaf8 = 0;
 
+    private Date lastUpdate = new Date();
+
+
 
     public Leafs()
     {
-
     }
 
     public int getLeaf1() {
@@ -149,6 +153,14 @@ public class Leafs extends SugarRecord<Leafs> {
 
     }
 
+    @Override
+    public void save() {
+
+        this.lastUpdate = new Date();
+
+        super.save();
+    }
+
     public void reset()
     {
         leaf1 = 0;
@@ -160,4 +172,10 @@ public class Leafs extends SugarRecord<Leafs> {
         leaf7 = 0;
         leaf8 = 0;
     }
+
+    public Date getLastUpdate()
+    {
+        return this.lastUpdate;
+    }
+
 }

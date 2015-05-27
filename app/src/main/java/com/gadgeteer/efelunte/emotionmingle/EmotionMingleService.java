@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -11,15 +12,32 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.gadgeteer.efelunte.emotionmingle.model.Emotion;
+import com.gadgeteer.efelunte.emotionmingle.model.Leafs;
 import com.gadgeteer.efelunte.emotionmingle.model.Session;
 import com.gadgeteer.efelunte.emotionmingle.model.User;
 import com.gadgeteer.efelunte.emotionmingle.utils.Util;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class EmotionMingleService extends Service {
+
+    Disponibilidad disponibilidad = new Disponibilidad();
 
     public EmotionMingleService() {
     }
@@ -57,20 +75,111 @@ public class EmotionMingleService extends Service {
             @Override
             public void run()
             {
-
                 Log.i(EmotionMingle.TAG, "scheduleAtFixedRate");
 
 
-                if(MainApp.isActivityVisible())
+                Cursor lastSMSMessageInbox = disponibilidad.getLastSMSMessageSent();
+
+                if(lastSMSMessageInbox != null) {
+
+                    String body = lastSMSMessageInbox.getString(lastSMSMessageInbox.getColumnIndexOrThrow("body")).toString();
+                    String number = lastSMSMessageInbox.getString(lastSMSMessageInbox.getColumnIndexOrThrow("address")).toString();
+                    String date = lastSMSMessageInbox.getString(lastSMSMessageInbox.getColumnIndexOrThrow("date")).toString();
+                    String type = lastSMSMessageInbox.getString(lastSMSMessageInbox.getColumnIndexOrThrow("type")).toString();
+
+                    Log.i(EmotionMingle.TAG, "SMS Body: " + body);
+                    Log.i(EmotionMingle.TAG, "SMS Type: " + type);
+                    Log.i(EmotionMingle.TAG, "SMS Date: " + date);
+                }else
                 {
-                    Log.i(EmotionMingle.TAG, "La app esta en foreground!!");
-                    return;
+                    Log.i(EmotionMingle.TAG, "There isnt sent messages");
                 }
+
+                disponibilidad.getLastIncomingCallLog();
+                disponibilidad.getLastOutgoingCallLog();
+
+
+                Date now = new Date();
 
                 Session session = Util.getSession();
 
                 if(session != null)
                 {
+                    Leafs leafs = session.getLeafs();
+
+                    if(leafs != null)
+                    {
+                        if(now.getTime() - leafs.getLastUpdate().getTime() > Constants.LEAFS_SERVICE_POLLING)
+                        {
+                            /**
+                             * Si la ultima actualizacion de las hojas fue hace mas de 5 minutos se consulta
+                             * al servicio y se actualiza el valor de las hojas
+                             */
+
+                            try {
+
+                                HttpClient httpclient = new DefaultHttpClient();
+
+                                HttpResponse response = httpclient.execute(new HttpGet(Constants.LEAFS_SERVICE_URL));
+                                StatusLine statusLine = response.getStatusLine();
+
+                                HttpEntity entity = response.getEntity();
+
+                                if (statusLine.getStatusCode() == HttpStatus.SC_OK)
+                                {
+                                    String responseString = EntityUtils.toString(entity);
+
+                                    JSONObject responseJson = new JSONObject(responseString);
+
+                                    int leaf1 = responseJson.getInt("Leaf1");
+                                    int leaf2 = responseJson.getInt("Leaf2");
+                                    int leaf3 = responseJson.getInt("Leaf3");
+                                    int leaf4 = responseJson.getInt("Leaf4");
+                                    int leaf5 = responseJson.getInt("Leaf5");
+                                    int leaf6 = responseJson.getInt("Leaf6");
+                                    int leaf7 = responseJson.getInt("Leaf7");
+                                    int leaf8 = responseJson.getInt("Leaf8");
+
+                                    leafs.setLeaf1(leaf1);
+                                    leafs.setLeaf2(leaf2);
+                                    leafs.setLeaf3(leaf3);
+                                    leafs.setLeaf4(leaf4);
+                                    leafs.setLeaf5(leaf5);
+                                    leafs.setLeaf6(leaf6);
+                                    leafs.setLeaf7(leaf7);
+                                    leafs.setLeaf8(leaf8);
+
+                                    leafs.save();
+
+
+                                    MainApp.updateLeafs();
+
+                                    MainApp.notifyTreeObservers();
+
+                                    Log.i(EmotionMingle.TAG, "Service Response: " + responseString);
+
+                                }
+
+                            }catch (IOException e0)
+                            {
+                                e0.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+
+                    }
+                    else
+                    {
+                        Log.i(EmotionMingle.TAG, "Leafs is NULL");
+                    }
+
+                    /**
+                     * Se verifica la fecha de la ultima emocion ingresada
+                     */
+
                     User loggedUser = session.getUser();
 
                     if(loggedUser != null)
@@ -80,11 +189,22 @@ public class EmotionMingleService extends Service {
                         if(lastEmotion != null)
                         {
                             Date emotionDate = lastEmotion.getDate();
-                            Date now = new Date();
 
-                            if(now.getTime() - emotionDate.getTime() > 15*60*1000)
+                            Log.i(EmotionMingle.TAG, "LastEmotion hace: " + (now.getTime() - emotionDate.getTime()));
+
+
+                            if(now.getTime() - emotionDate.getTime() > Constants.INACTIVITY_MAX_TIME)
                             {
-                                MainApp.showNotification(1, "EmotionMingle", "¿Como te sientes ahora?");
+                                if(!MainApp.isActivityVisible())
+                                {
+                                    Log.i(EmotionMingle.TAG, "La app NO esta visible!!");
+                                    MainApp.showNotification(1, "EmotionMingle", "¿Como te sientes ahora?");
+                                }
+                                else
+                                {
+                                    Log.i(EmotionMingle.TAG, "La app esta visible!!");
+                                }
+
                             }
 
                         }
@@ -105,7 +225,7 @@ public class EmotionMingleService extends Service {
 
 
             }
-        }, 0, 1*60*1000);
+        }, 0, Constants.SERVICE_TIMER_PERIOD);
 
 
     }

@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -24,6 +25,8 @@ import com.gadgeteer.efelunte.emotionmingle.utils.Util;
 import com.orm.SugarApp;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 /**
@@ -129,10 +132,12 @@ public class MainApp extends SugarApp implements ServiceConnection {
 
                             Toast.makeText(getApplicationContext(), "Estas conectado a EmotionMingle", Toast.LENGTH_LONG).show();
 
+                            /*
                             turnOff();
                             Thread.sleep(1000);
 
                             clearLeafs();
+                            */
                             updateBar();
 
 
@@ -145,8 +150,6 @@ public class MainApp extends SugarApp implements ServiceConnection {
                             if(emotionMingleHardware != null) {
                                 emotionMingleHardware.close();
                             }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
 
                     }
@@ -260,10 +263,12 @@ public class MainApp extends SugarApp implements ServiceConnection {
 
                         Toast.makeText(getApplicationContext(), "Estas conectado a EmotionMingle", Toast.LENGTH_LONG).show();
 
+                        /*
                         turnOff();
                         Thread.sleep(1000);
 
                         clearLeafs();
+                        */
                         updateBar();
 
 
@@ -276,8 +281,6 @@ public class MainApp extends SugarApp implements ServiceConnection {
                         if(emotionMingleHardware != null){
                             emotionMingleHardware.close();
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
 
 
@@ -287,6 +290,7 @@ public class MainApp extends SugarApp implements ServiceConnection {
 
 
     }
+
 
 
     public static void updateBar() throws IOException
@@ -311,6 +315,31 @@ public class MainApp extends SugarApp implements ServiceConnection {
                 if(emotionMingleHardware != null)
                 {
                     emotionMingleHardware.changeBar(sad, tired, stressed, angry, happy, energetic, relaxed, calmed);
+                }
+            }
+        }
+
+    }
+
+
+    public static void updateLeafs() throws IOException
+    {
+        Session session = Util.getSession();
+
+        if(session != null)
+        {
+            Leafs leafs = session.getLeafs();
+
+            if (leafs != null)
+            {
+                if(emotionMingleHardware != null)
+                {
+                    for(int i=1; i<9; i++)
+                    {
+                        int value = leafs.getLeafValue(i);
+                        emotionMingleHardware.changeLeaf(i, value);
+                    }
+
                 }
             }
         }
@@ -466,5 +495,26 @@ public class MainApp extends SugarApp implements ServiceConnection {
     }
 
 
+    static TreeObservable treeObservable = new TreeObservable();
 
+    public static void notifyTreeObservers()
+    {
+        treeObservable.notifyObservers();
+    }
+
+
+    public static void addTreeObserver(Observer observer)
+    {
+        treeObservable.addObserver(observer);
+    }
+
+    public static void removeTreeObserver(Observer observer)
+    {
+        treeObservable.deleteObserver(observer);
+    }
+
+    public static ContentResolver getAppContentResolver()
+    {
+        return context.getContentResolver();
+    }
 }
