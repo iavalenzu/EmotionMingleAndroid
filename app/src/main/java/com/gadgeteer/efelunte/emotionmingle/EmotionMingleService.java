@@ -3,7 +3,11 @@ package com.gadgeteer.efelunte.emotionmingle;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Binder;
 import android.os.Handler;
@@ -39,6 +43,66 @@ public class EmotionMingleService extends Service {
 
     Disponibilidad disponibilidad = new Disponibilidad();
 
+    private final BroadcastReceiver mReceiverFound = new BroadcastReceiver()
+    {
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+
+            Log.i(EmotionMingle.TAG, "Action: " + action);
+
+            if (action.equals(Intent.ACTION_SCREEN_ON))
+            {
+
+                /**
+                 * Se verifica la fecha de la ultima emocion ingresada
+                 */
+
+                Date now = new Date();
+
+                Session session = Util.getSession();
+
+                if(session != null) {
+
+                    User loggedUser = session.getUser();
+
+                    if (loggedUser != null) {
+                        Emotion lastEmotion = loggedUser.getLastEmotion();
+
+                        if (lastEmotion != null) {
+                            Date emotionDate = lastEmotion.getDate();
+
+                            Log.i(EmotionMingle.TAG, "LastEmotion hace: " + (now.getTime() - emotionDate.getTime()));
+
+
+                            if (now.getTime() - emotionDate.getTime() > Constants.INACTIVITY_MAX_TIME) {
+                                if (!MainApp.isActivityVisible()) {
+                                    Log.i(EmotionMingle.TAG, "La app NO esta visible!!");
+                                    MainApp.showNotification(1, "EmotionMingle", "¿Como te sientes ahora?");
+                                } else {
+                                    Log.i(EmotionMingle.TAG, "La app esta visible!!");
+                                }
+
+                            }
+
+                        } else {
+                            Log.i(EmotionMingle.TAG, "LastEmotion is NULL");
+                        }
+                    } else {
+                        Log.i(EmotionMingle.TAG, "LoggedUser is NULL");
+                    }
+                }
+
+
+            }
+            if (action.equals(Intent.ACTION_SCREEN_OFF))
+            {
+            }
+
+        }
+    };
+
+
     public EmotionMingleService() {
     }
 
@@ -69,6 +133,17 @@ public class EmotionMingleService extends Service {
     {
         Log.i(EmotionMingle.TAG, "EmotionMingleService > OnCreate");
         super.onCreate();
+
+        IntentFilter filter2 = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        registerReceiver(mReceiverFound, filter2);
+
+        IntentFilter filter3 = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+        registerReceiver(mReceiverFound, filter3);
+
+        IntentFilter filter4 = new IntentFilter(Intent.ACTION_POWER_DISCONNECTED);
+        registerReceiver(mReceiverFound, filter4);
+
+
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -176,47 +251,6 @@ public class EmotionMingleService extends Service {
                         Log.i(EmotionMingle.TAG, "Leafs is NULL");
                     }
 
-                    /**
-                     * Se verifica la fecha de la ultima emocion ingresada
-                     */
-
-                    User loggedUser = session.getUser();
-
-                    if(loggedUser != null)
-                    {
-                        Emotion lastEmotion = loggedUser.getLastEmotion();
-
-                        if(lastEmotion != null)
-                        {
-                            Date emotionDate = lastEmotion.getDate();
-
-                            Log.i(EmotionMingle.TAG, "LastEmotion hace: " + (now.getTime() - emotionDate.getTime()));
-
-
-                            if(now.getTime() - emotionDate.getTime() > Constants.INACTIVITY_MAX_TIME)
-                            {
-                                if(!MainApp.isActivityVisible())
-                                {
-                                    Log.i(EmotionMingle.TAG, "La app NO esta visible!!");
-                                    MainApp.showNotification(1, "EmotionMingle", "¿Como te sientes ahora?");
-                                }
-                                else
-                                {
-                                    Log.i(EmotionMingle.TAG, "La app esta visible!!");
-                                }
-
-                            }
-
-                        }
-                        else
-                        {
-                            Log.i(EmotionMingle.TAG, "LastEmotion is NULL");
-                        }
-                    }
-                    else
-                    {
-                        Log.i(EmotionMingle.TAG, "LoggedUser is NULL");
-                    }
                 }
                 else
                 {
@@ -228,6 +262,13 @@ public class EmotionMingleService extends Service {
         }, 0, Constants.SERVICE_TIMER_PERIOD);
 
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        unregisterReceiver(mReceiverFound);
     }
 
     @Override
