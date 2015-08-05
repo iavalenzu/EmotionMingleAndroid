@@ -26,6 +26,7 @@ public class Emotion extends SugarRecord<Emotion> {
 
     public Emotion(){
 
+
     }
 
     public Emotion(String type, User user)
