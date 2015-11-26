@@ -193,9 +193,20 @@ public class EmotionMingleService extends Service {
 
                             try {
 
+                                User loggedUser = session.getUser();
+                                String serviceUrl = Constants.LEAFS_SERVICE_URL;
+
+                                if (loggedUser != null)
+                                {
+                                    serviceUrl =  Constants.LEAFS_SERVICE_URL + loggedUser.getApikey();
+                                }
+
+                                Log.i(EmotionMingle.TAG, "Service URL: " + serviceUrl);
+
+
                                 HttpClient httpclient = new DefaultHttpClient();
 
-                                HttpResponse response = httpclient.execute(new HttpGet(Constants.LEAFS_SERVICE_URL));
+                                HttpResponse response = httpclient.execute(new HttpGet(serviceUrl));
                                 StatusLine statusLine = response.getStatusLine();
 
                                 HttpEntity entity = response.getEntity();

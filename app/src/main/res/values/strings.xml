@@ -25,6 +25,7 @@
     <string name="action_register_short">Register</string>
     <string name="prompt_firstname">Firstname</string>
     <string name="prompt_lastname">Lastname</string>
+    <string name="prompt_apikey">Api Key</string>
     <string name="action_add_location">Agregar Ubicacion</string>
 
     <string-array name="leafs_array">

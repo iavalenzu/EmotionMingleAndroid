@@ -29,6 +29,7 @@ public class RegisterActivity extends Activity  {
     private EditText mPasswordView;
     private EditText mFirstName;
     private EditText mLastName;
+    private EditText mApiKey;
 
 
     private View mProgressView;
@@ -44,6 +45,7 @@ public class RegisterActivity extends Activity  {
 
         mFirstName = (EditText) findViewById(R.id.firstname);
         mLastName = (EditText) findViewById(R.id.lastname);
+        mApiKey = (EditText) findViewById(R.id.apikey);
 
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -89,6 +91,7 @@ public class RegisterActivity extends Activity  {
         String password = mPasswordView.getText().toString();
         String firstname = mFirstName.getText().toString();
         String lastname = mLastName.getText().toString();
+        String apikey = mApiKey.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -127,6 +130,12 @@ public class RegisterActivity extends Activity  {
         }
 
 
+        if (TextUtils.isEmpty(apikey)) {
+            mApiKey.setError(getString(R.string.error_field_required));
+            focusView = mApiKey;
+            cancel = true;
+        }
+
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -136,7 +145,7 @@ public class RegisterActivity extends Activity  {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
 
-            User user = new User(email, firstname, lastname, "", password);
+            User user = new User(email, firstname, lastname, "", password, apikey);
             user.save();
 
             Toast.makeText(getApplicationContext(), "Usuario guardado", Toast.LENGTH_LONG).show();

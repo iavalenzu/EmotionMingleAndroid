@@ -17,17 +17,19 @@ public class User extends SugarRecord<User> {
     String lastname;
     String pass;
     String birthday;
+    String apikey;
 
     public User(){
 
     }
 
-    public User(String email, String firstname, String lastname, String birthday, String pass){
+    public User(String email, String firstname, String lastname, String birthday, String pass, String apikey){
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
         this.birthday = birthday;
         this.pass = pass;
+        this.apikey = apikey;
 
     }
 
@@ -53,6 +55,14 @@ public class User extends SugarRecord<User> {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
     }
 
     public String getPass() {
